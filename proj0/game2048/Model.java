@@ -137,12 +137,13 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        for (int cols = 0; cols < b.size(); cols++){
-            for (int row = 0; row < b.size(); row++){
-                if(b.tile(cols, row) == null){
+        for (int cols = 0; cols < b.size(); cols++) {
+            for (int row = 0; row < b.size(); row++) {
+                if (b.tile(cols, row) == null) {
                     return true;
                 }
-            }}
+            }
+        }
 
         // TODO: Fill in this function.
         return false;
@@ -158,12 +159,11 @@ public class Model extends Observable {
             for (int row = 0; row < b.size(); row++) {
                 Tile t = b.tile(cols, row);
                 if (t != null && t.value() == MAX_PIECE) {
-                        return true;
-                    }
-
+                    return true;
+                }
             }
         }
-                // TODO: Fill in this function.
+        // TODO: Fill in this function.
         return false;
     }
 
@@ -174,13 +174,37 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
+        for (int cols = 0; cols < b.size(); cols++) {
+            for (int row = 0; row < b.size(); row++) {
+                Tile t = b.tile(cols, row);
+                if (t == null) {
+                    return true;
+                } else {
+                    if (row < 3 && cols < 3) {
+                        if (t.value() == b.tile(cols + 1, row).value() || t.value() == b.tile(cols, row + 1).value()) {
+                            return true;
+                        }
+                    }
+                    else if (row == 3 && cols < 3) {
+                        if (t.value() == b.tile(cols + 1, row).value()) {
+                            return true;
+                        }
+                    }
+                    else if (cols == 3 && row < 3) {
+                        if (t.value() == b.tile(cols, row + 1).value()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         // TODO: Fill in this function.
         return false;
     }
 
 
     @Override
-     /** Returns the model as a string, used for debugging. */
+    /** Returns the model as a string, used for debugging. */
     public String toString() {
         Formatter out = new Formatter();
         out.format("%n[%n");
