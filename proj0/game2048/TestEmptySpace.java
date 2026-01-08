@@ -39,7 +39,6 @@ public class TestEmptySpace {
         };
 
         b = new Board(rawVals, 0);
-
         assertTrue("Top row is empty\n" + b, Model.emptySpaceExists(b));
     }
 

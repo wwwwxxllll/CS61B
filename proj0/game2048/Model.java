@@ -1,7 +1,10 @@
 package game2048;
 
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Observable;
+
+
 
 
 /** The state of a game of 2048.
@@ -109,6 +112,116 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
+        int[][] arr = new int[4][4];
+        int[][] arr1 = new int[4][4];
+        int[][] arr2 = new int[4][4];
+
+
+        if(side == Side.SOUTH) {
+            for (int cols = 0; cols < board.size(); cols++) {
+                for (int row = 0; row < board.size(); row++) {
+                    if (board.tile(cols, row) != null) {
+                        arr1[row][cols] = board.tile(cols, row).value();
+                    }
+                }
+            }
+            board = new Board(arr1, score);
+        }
+
+        if(side == Side.EAST) {
+            for (int cols = 0; cols < board.size(); cols++) {
+                for (int row = 0; row < board.size(); row++) {
+                    if (board.tile(cols, row) != null) {
+                        arr1[3 - cols][3 - row] = board.tile(cols, row).value();
+                    }
+                }
+            }
+            board = new Board(arr1, score);
+        }
+
+        if(side == Side.WEST) {
+            for (int cols = 0; cols < board.size(); cols++) {
+                for (int row = 0; row < board.size(); row++) {
+                    if (board.tile(cols, row) != null) {
+                        arr1[cols][row] = board.tile(cols, row).value();
+                    }
+                }
+            }
+            board = new Board(arr1, score);
+        }
+
+
+
+
+
+        for (int i = 0; i < 3; i++) {
+
+            for (int row = 2; row > -1; row--) {
+                for (int cols = 0; cols < size(); cols++) {
+                    Tile t = board.tile(cols, row);
+                    Tile tAdjacent = board.tile(cols, row + 1);
+                    if (t != null && tAdjacent != null && t.value() == tAdjacent.value()) {continue;}
+                    if (t != null && tAdjacent != null && t.value() != tAdjacent.value()) {continue;}
+                    if (t != null) {
+                        board.move(cols, row + 1, t);
+                        changed = true;
+                    }
+                }
+            }
+
+
+            for (int row = 2; row > -1; row--) {
+                for (int cols = 0; cols < size(); cols++) {
+                    Tile t = board.tile(cols, row);
+                    Tile tAdjacent = board.tile(cols, row + 1);
+                    if (arr[3 - row][cols] == 1 || arr[2 - row][cols] == 1) {
+                        continue;
+                    }
+
+                    if (t != null && tAdjacent != null && t.value() == tAdjacent.value()) {
+                        arr[3 - row][cols] = 1;
+                        arr[2 - row][cols] = 1;
+                        board.move(cols, row + 1, t);
+                        score += board.tile(cols, row + 1).value();
+                        changed = true;
+                    }
+                }
+            }
+        }
+
+        if(side == Side.SOUTH) {
+            for (int cols = 0; cols < board.size(); cols++) {
+                for (int row = 0; row < board.size(); row++) {
+                    if (board.tile(cols, row) != null) {
+                        arr2[row][cols] = board.tile(cols, row).value();
+                    }
+                }
+            }
+            board = new Board(arr2, score);
+        }
+
+        if(side == Side.EAST) {
+            for (int cols = 0; cols < board.size(); cols++) {
+                for (int row = 0; row < board.size(); row++) {
+                    if (board.tile(cols, row) != null) {
+                        arr2[cols][row] = board.tile(cols, row).value();
+                    }
+                }
+            }
+            board = new Board(arr2, score);
+        }
+        if(side == Side.WEST) {
+            for (int cols = 0; cols < board.size(); cols++) {
+                for (int row = 0; row < board.size(); row++) {
+                    if (board.tile(cols, row) != null) {
+                        arr2[3 - cols][3 - row] = board.tile(cols, row).value();
+                    }
+                }
+            }
+            board = new Board(arr2, score);
+        }
+
+
 
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
@@ -174,30 +287,30 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
+
+        if(emptySpaceExists(b)) {return true;}
+
         for (int cols = 0; cols < b.size(); cols++) {
             for (int row = 0; row < b.size(); row++) {
                 Tile t = b.tile(cols, row);
-                if (t == null) {
-                    return true;
-                } else {
-                    if (row < 3 && cols < 3) {
-                        if (t.value() == b.tile(cols + 1, row).value() || t.value() == b.tile(cols, row + 1).value()) {
+                if (row < 3 && cols < 3) {
+                    if (t.value() == b.tile(cols + 1, row).value() || t.value() == b.tile(cols, row + 1).value()) {
                             return true;
                         }
                     }
-                    else if (row == 3 && cols < 3) {
-                        if (t.value() == b.tile(cols + 1, row).value()) {
-                            return true;
-                        }
+                else if (row == 3 && cols < 3) {
+                    if (t.value() == b.tile(cols + 1, row).value()) {
+                        return true;
                     }
-                    else if (cols == 3 && row < 3) {
-                        if (t.value() == b.tile(cols, row + 1).value()) {
-                            return true;
-                        }
+                }
+                else if (cols == 3 && row < 3) {
+                    if (t.value() == b.tile(cols, row + 1).value()) {
+                        return true;
                     }
                 }
             }
         }
+
         // TODO: Fill in this function.
         return false;
     }
